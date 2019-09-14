@@ -1,0 +1,15 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+<div class="forMargin">
+
+  <h2>Review Of Product: {{ obj.name }}</h2>
+    <br>
+  <h3 style="text-align:center">Rating: {{obj.rating}}</h3>
+    <br>
+  <h3>Reviews: </h3>
+  <h3 style="margin-left: 12px;">{{obj.reviews}}</h3>
+
+</div>
+
+{% endblock %}

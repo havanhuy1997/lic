@@ -1,0 +1,14 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+
+
+
+{% for out in productname%}
+
+{% if forloop.counter == 1%}
+<h2>Select The Product: </h2>
+{%endif%}
+  <h3><a href="{% url 'searchEngine:reviewdisplay' slug=out %}">-> {{out}}</a></h3>
+{% endfor %}
+{% endblock %}
