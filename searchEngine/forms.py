@@ -9,9 +9,10 @@ class searchForm(forms.ModelForm):
 class LoginForm(forms.ModelForm):
     class Meta:
         model = models.LoginData
-        fields = ['username','password','dob']
+        fields = "__all__"  
+
 
 class OtpForm(forms.ModelForm):
     class Meta:
         model = models.OtpData
-        fields = ['username','otp']
+        fields = "__all__"  

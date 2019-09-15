@@ -17,23 +17,24 @@ import easygui
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from django.views.decorators.csrf import csrf_exempt
 
-
+@csrf_exempt
 def fun1(request):
     
     if request.method == "POST":
-        form = LoginForm(request.POST)  
+        form = LoginForm(request.POST)
         if form.is_valid():
-            
             idInput = form.cleaned_data['username']
             pswdInput = form.cleaned_data['password']
             dobInput = form.cleaned_data['dob']
             
-            request.session[idInput] = driver
+            driver = webdriver.Chrome()
+
+            #request.session[idInput] = driver
             ###   Session management 
             ### Baically the username would contain the driver instance
 
-            driver = webdriver.Chrome()
             driver.get('https://ebiz.licindia.in/D2CPM/#Login')
 
             driver.maximize_window()
@@ -78,17 +79,21 @@ def fun1(request):
             time.sleep(10)
 
             if login_url == driver.current_url:
+                print('Wrong Credentials')
                 return_response = {
                     'status':0# O means credentials are wrong 
                 }
+                driver.quit()
                 return JsonResponse(return_response)
             else:
+                print('Credentials Worked')
                 return_response = {
                     'status':1# 1 means credentials worked now ask for otp and send it to url: /search/otp 
                 }
                 return JsonResponse(return_response)
 
         else:
+            print('Invalid Form Data')
             return_response = {
                 'status':3 # 3 means invalid form data sent 
             }
@@ -100,6 +105,7 @@ def fun1(request):
         }
         return JsonResponse(return_response)
 
+@csrf_exempt
 def fun2(request):
     if request.method == "POST":
         form = OtpForm(request.POST)  
@@ -130,6 +136,7 @@ def fun2(request):
             time.sleep(20)
 
             if url_check == driver.current_url:
+                driver.quit()
                 return_response = {
                     'status':0 # O means otp didn't work 
                 }
