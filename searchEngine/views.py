@@ -204,7 +204,8 @@ def fun2(request):
                 try:
                     df = pd.read_html(driver.find_elements_by_class_name('x-panel-bodyWrap')[3].get_attribute('innerHTML')) ###<-- List
                     
-                    for i in df:
+                    for j in range(0,len(df)):
+                        i = df[0]
                         sino.append(i[0].item())
                         policynumber.append(i[1].item())
                         name.append(i[2].item())
@@ -228,7 +229,8 @@ def fun2(request):
                     break
             
             df = pd.DataFrame(columns=['SI#','Policy Number','Customer Name','Doc','Premium','Mode','Fup','Agent Code','Plan','Term','Sum Assured','Status'], data={'SI#':sino,'Policy Number':policynumber,'Customer Name':name,'Doc':doc,'Premium':premium,'Mode':mode,'Fup':fup,'Agent Code':agentcode,'Plan':plan,'Term':term,'Sum Assured':sumassured,'Status':status}) 
-            #df.to_csv("./OUTPUT" + str(idInput) +".csv", sep=',', index=False) 
+            #df.to_csv("./OUTPUT" + str(idInput) +".csv", sep=',', index=False)
+            df.to_csv("./OUTPUT" + str(idInput) +".txt", sep='@', index=False) 
             
             driver.quit()
 
