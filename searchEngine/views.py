@@ -19,6 +19,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from django.views.decorators.csrf import csrf_exempt
 
+dict_drivers = {}
+
 @csrf_exempt
 def fun1(request):
     
@@ -34,6 +36,9 @@ def fun1(request):
             #request.session[idInput] = driver
             ###   Session management 
             ### Baically the username would contain the driver instance
+            ### DIDN'T WORK
+
+            dict_drivers[idInput] = driver
 
             driver.get('https://ebiz.licindia.in/D2CPM/#Login')
 
@@ -113,7 +118,8 @@ def fun2(request):
             idInput = form.cleaned_data['username']
             otpcode = form.cleaned_data['otp']
             
-            driver = request.session[idInput]
+            #driver = request.session[idInput]
+            driver = dict_drivers[idInput]
             ###   Session management 
             ### Baically the username would contain the driver instance
             
