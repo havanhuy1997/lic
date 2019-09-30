@@ -85,9 +85,34 @@ def fun1(request):
 
             if login_url == driver.current_url:
                 print('Wrong Credentials')
-                return_response = {
-                    'status':0# O means credentials are wrong 
-                }
+                try:
+                    if 'get authorization and user ID' in driver.find_elements_by_class_name('x-box-target')[10].text:
+                        print('Invalid username entered')
+                        return_response = {
+                            'status':7# 7 means invalid username 
+                        }
+                        
+                except:
+                    print('invalid username')
+                    pass
+                try:
+                    if 'The entered Password is invalid' in driver.find_elements_by_class_name('x-box-target')[10].text:
+                        print('Invalid password entered')
+                        return_response = {
+                            'status':8# 8 means invalid password 
+                        }
+                except:
+                    print('invalid Password')
+                    pass
+                try:
+                    if 'Invalid Date Of Birth' in driver.find_elements_by_class_name('x-box-target')[10].text:
+                        print('Invalid Date Of Birth entered')
+                        return_response = {
+                            'status':9# 9 means invalid Date Of Birth 
+                        }
+                except:
+                    print('invalid Date Of Birth')
+                    pass
                 driver.quit()
                 return JsonResponse(return_response)
             else:
@@ -144,7 +169,7 @@ def fun2(request):
             if url_check == driver.current_url:
                 driver.quit()
                 return_response = {
-                    'status':0 # O means otp didn't work 
+                    'status':0 # O means otp didn't work  I have written these so you can display on anroid app that whay is the issue
                 }
                 return JsonResponse(return_response)
           
@@ -199,34 +224,37 @@ def fun2(request):
             sumassured = []
             status = []
             
-            while True:            
-                time.sleep(10)
+            while True:
+                time.sleep(5)
                 try:
-                    df = pd.read_html(driver.find_elements_by_class_name('x-panel-bodyWrap')[3].get_attribute('innerHTML')) ###<-- List
-                    
-                    for j in range(0,len(df)):
-                        i = df[0]
+                    while True:
+                        try:
+                            df = pd.read_html(driver.find_elements_by_class_name('x-panel-bodyWrap')[3].get_attribute('innerHTML')) ###<-- List
+                            break # it will break from the loop once the specific element will be present. 
+                        except:
+                            print("Loading took too much time!-Try again")
+                    for i in df:
                         sino.append(i[0].item())
                         policynumber.append(i[1].item())
                         name.append(i[2].item())
                         doc.append(i[3].item())
-                        premium.append(i[4].item())
+                        premium.append(i[4].item().replace('₹',''))
                         mode.append(i[5].item())
                         fup.append(i[6].item())
                         agentcode.append(i[7].item())
                         plan.append(i[8].item())
                         term.append(i[9].item())
-                        sumassured.append(i[10].item())
+                        sumassured.append(i[10].item().replace('₹',''))
                         status.append(i[11].item())
                 except BaseException as e:
                     print(str(e))
                     pass        
                 try:
                     driver.find_elements_by_class_name('x-btn-plain-toolbar-small')[2].click()
-                    time.sleep(15)
                 except:
                     print('here')
                     break
+            
             
             df = pd.DataFrame(columns=['SI#','Policy Number','Customer Name','Doc','Premium','Mode','Fup','Agent Code','Plan','Term','Sum Assured','Status'], data={'SI#':sino,'Policy Number':policynumber,'Customer Name':name,'Doc':doc,'Premium':premium,'Mode':mode,'Fup':fup,'Agent Code':agentcode,'Plan':plan,'Term':term,'Sum Assured':sumassured,'Status':status}) 
             #df.to_csv("./OUTPUT" + str(idInput) +".csv", sep=',', index=False)
@@ -235,7 +263,7 @@ def fun2(request):
             driver.quit()
 
             print(df.to_json())
-            return JsonResponse(df.to_json()) 
+            return JsonResponse(df.to_json(), safe=False) 
 
         else:
             return_response = {
